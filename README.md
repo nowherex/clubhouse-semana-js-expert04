@@ -1,8 +1,6 @@
 # ClubHouse Clone Template - Semana JS Expert 4.0
 
-Seja bem vindo(a) à quarta Semana Javascript Expert.Este é o código inicial para iniciar nossa jornada.
-
-Marque esse projeto com uma estrela 🌟
+Webapp 'Club House', compatível com plataformas Web, Android, iOS - desenvolvido na SemanaJSExpert 4.0 do fera Erick Wendel.
 
 ## Preview
 
