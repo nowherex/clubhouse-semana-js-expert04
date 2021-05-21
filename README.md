@@ -26,7 +26,7 @@ Webapp 'Club House', compatível com plataformas Web, Android, iOS - desenvolvid
 - Lobby
   - [ ] Se não houver dados do usuario em localStorage deve voltar para login
   - [x] Mostra todas as salas ativas
-  - [ ] Atualiza salas em realtime
+  - [x] Atualiza salas em realtime
   - [x] Pode criar uma sala sem tópico
   - [x] Pode criar uma sala com tópico
   - [x] Pode acessar salas ativas
@@ -34,7 +34,7 @@ Webapp 'Club House', compatível com plataformas Web, Android, iOS - desenvolvid
   - [ ] Se não houver dados do usuario em localStorage deve voltar para login
   - [x] Cria uma sala com um usuário dono
   - [x] Todos usuários futuros entram com perfil de attendees
-  - [ ] Notifica Lobby sobre atualizações na sala
+  - [x] Notifica Lobby sobre atualizações na sala
   - [x] Lista usuários com perfis de speakers e attendees
   - [x] Se o dono da sala desconectar, será removida
   - Users
@@ -48,7 +48,7 @@ Webapp 'Club House', compatível com plataformas Web, Android, iOS - desenvolvid
           - [x] Promove o speaker mais velho da sala
           - [x] Se não houver speaker promove o attendee mais velho da sala
     - Attendee
-      - [ ] Pode ouvir speakers ativos
+      - [x] Pode ouvir speakers ativos
       - [ ] Pode pedir upgrade de perfil ao dono da sala
         - Ao ser aprovado
           - [ ] Reinicia todas as suas chamas ativas com os usuários da sala
