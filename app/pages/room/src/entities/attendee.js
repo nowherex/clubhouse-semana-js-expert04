@@ -5,11 +5,12 @@ export default class Attendee {
         this.isSpeaker = isSpeaker
         this.roomId = roomId
         this.peerId = peerId
+
         const name = username || "Usuário Anônimo"
         this.username = name
 
         const [firstName, lastName] = name.split(/\s/)
-        this.firstName = firstName
+        this.firstName = firstName + id
         this.lastName = lastName
     }
 }

@@ -1,12 +1,11 @@
 import { constants } from "../../_shared/constants.js";
 import LobbyController from "./controller.js";
 import LobbySocketBuilder from "./util/lobbySocketBuilder.js";
-import View from "./util/view.js";
-
+import View from "./view.js";
 
 const user = {
-    img: 'https://cdn2.iconfinder.com/data/icons/social-flat-buttons-3/512/anonymous-256.png',
-    username: 'Leonardo' + Date.now()
+    img: 'https://cdn4.iconfinder.com/data/icons/avatars-xmas-giveaway/128/bear_russian_animal_avatar-256.png',
+    username: 'Erick ' + Date.now()
 }
 
 
@@ -20,5 +19,7 @@ const dependencies = {
     user,
     view: View
 }
-
-await LobbyController.initialize(dependencies)
+LobbyController.initialize(dependencies)
+    .catch(error => {
+        window.alert(error.message)
+    })

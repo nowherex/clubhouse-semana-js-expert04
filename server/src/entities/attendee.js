@@ -6,6 +6,5 @@ export default class Attendee {
         this.isSpeaker = isSpeaker
         this.roomId = roomId
         this.peerId = peerId
-
     }
 }

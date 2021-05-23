@@ -1,5 +1,5 @@
 class Attendee {
-    constructor({ id, img, username}){ 
+    constructor({ id, img, username }) {
         this.id = id
         this.img = img
         this.username = username
@@ -14,7 +14,7 @@ export default class Room {
         roomLink,
         attendeesCount,
         speakersCount,
-        featuredAttendee,
+        featuredAttendees,
         owner,
     }) {
 
@@ -23,7 +23,7 @@ export default class Room {
         this.subTopic = subTopic || "Semana JS Expert 4.0"
         this.attendeesCount = attendeesCount
         this.speakersCount = speakersCount
-        this.featuredAttendee = featuredAttendee?.map(attendee => new Attendee(attendee))
+        this.featuredAttendees = featuredAttendees?.map(attendee => new Attendee(attendee))
         this.owner = new Attendee(owner)
         this.roomLink = roomLink
     }

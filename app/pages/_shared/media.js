@@ -8,7 +8,6 @@ export default class Media {
     static createMediaStreamFake() {
         return new MediaStream([
             Media._createEmptyAudioTrack()
-
         ])
     }
 
@@ -17,9 +16,8 @@ export default class Media {
         const oscillator = audioContext.createOscillator()
         const destination = oscillator.connect(audioContext.createMediaStreamDestination())
         oscillator.start()
-
         const [track] = destination.stream.getAudioTracks()
 
-        return Object.assign(track, { enabled: false})
+        return Object.assign(track, { enabled: false })
     }
 }

@@ -1,13 +1,13 @@
 
-import { constants } from "../../../_shared/constants.js"
-import SocketBuilder from "../../../_shared/socketBuilder.js"
+import { constants } from "../../../_shared/constants.js";
+import SocketBuilder from "../../../_shared/socketBuilder.js";
 
-export default class RoomSocketBuilder extends SocketBuilder{
-    constructor({ socketUrl, namespace}) {
-        super({ socketUrl, namespace})
-        this.onRoomUpdated = () => {}
-        this.OnUserProfileUpgrade = () => {}
-
+export default class RoomSocketBuilder extends SocketBuilder {
+    constructor({ socketUrl, namespace }) {
+        super({ socketUrl, namespace })
+        this.onRoomUpdated = () => { }
+        this.onUserProfileUpgrade = () => { }
+        this.OnSpeakRequested = () => { }
     }
 
     setOnRoomUpdated(fn) {
@@ -17,17 +17,25 @@ export default class RoomSocketBuilder extends SocketBuilder{
     }
 
     setOnUserProfileUpgrade(fn) {
-        this.OnUserProfileUpgrade = fn
+        this.onUserProfileUpgrade = fn
 
         return this
     }
 
-    builder() {
-        const socket = super.builder()
+    setOnSpeakRequested(fn) {
+        this.onSpeakRequested = fn
+
+        return this
+    }
+
+
+    build() {
+        const socket = super.build()
 
         socket.on(constants.events.LOBBY_UPDATED, this.onRoomUpdated)
-        socket.on(constants.events.UPGRADE_USER_PERMISSION, this.OnUserProfileUpgrade)
-       
-        return socket
+        socket.on(constants.events.UPGRADE_USER_PERMISSION, this.onUserProfileUpgrade)
+        socket.on(constants.events.SPEAK_REQUEST, this.onSpeakRequested)
+
+        return socket;
     }
 }

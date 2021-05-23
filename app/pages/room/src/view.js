@@ -1,21 +1,24 @@
+import { constants } from "../../_shared/constants.js"
 import Attendee from "./entities/attendee.js"
-import getTemplate from "./templates/attendeeTemplates.js"
+import getTemplate from "./templates/attendeeTemplate.js"
 
 const imgUser = document.getElementById('imgUser')
 const roomTopic = document.getElementById('pTopic')
-const gridSpeakers = document.getElementById('gridSpeakers')
 const gridAttendees = document.getElementById('gridAttendees')
+const gridSpeakers = document.getElementById('gridSpeakers')
 const btnMicrophone = document.getElementById('btnMicrophone')
 const btnClipBoard = document.getElementById('btnClipBoard')
 const btnClap = document.getElementById('btnClap')
+const toggleImage = document.getElementById('toggleImage')
+const btnLeave = document.getElementById('btnLeave')
+// const btnsTopicModal = [...document.querySelectorAll('[data="modal-request-btn"]')]
+// const btnAcepteRequest = document.getElementById('btnAcepteRequest')
+// const btnDeclineRequest = document.getElementById('btnDeclineRequest')
 
 export default class View {
-
     static updateUserImage({ img, username }) {
-
         imgUser.src = img
-        imgUser.alt = username
-
+        imgUser.al = username
     }
 
     static updateRoomTopic({ topic }) {
@@ -31,18 +34,19 @@ export default class View {
         return existingItem
     }
 
+
     static removeItemFromGrid(id) {
         const existingElement = View._getExistingItemOnGrid({ id })
         existingElement?.remove()
     }
 
-    static addAttendeeOnGrid(item, remoFirst = false) {
+    static addAttendeeOnGrid(item, removeFirst = false) {
         const attendee = new Attendee(item)
         const id = attendee.id
         const htmlTemplate = getTemplate(attendee)
         const baseElement = attendee.isSpeaker ? gridSpeakers : gridAttendees
 
-        if (remoFirst) {
+        if (removeFirst) {
             View.removeItemFromGrid(id)
             baseElement.innerHTML += htmlTemplate
             return;
@@ -50,7 +54,7 @@ export default class View {
 
         const existingItem = View._getExistingItemOnGrid({ id, baseElement })
         if (existingItem) {
-            existingItem.innerHTML = htmlTemplate
+            existingItem.innerHTML = htmlTemplate;
             return;
         }
 
@@ -70,20 +74,21 @@ export default class View {
                 console.error('erro to play', error)
             }
         })
-
+ 
     }
 
+    
 
-    static renderAudioElement({ calledId, stream, isCurrentId }) {
-        View._createAudioElement({
+    static renderAudioElement({ callerId, stream, isCurrentId }) {
+        View._createAudioElement({ 
             muted: isCurrentId,
             srcObject: stream
-        })
+        }) 
 
     }
-
     static showUserFeatures(isSpeaker) {
-        //attendee
+
+        // attendee
         if (!isSpeaker) {
             btnClap.classList.remove('hidden')
             btnMicrophone.classList.add('hidden')
@@ -95,4 +100,77 @@ export default class View {
         btnMicrophone.classList.remove('hidden')
         btnClipBoard.classList.remove('hidden')
     }
+
+    static _onClapClick(command) {
+        return () => {
+            command()
+            const basePath = './../../assets/icons/'
+            const handActive = 'hand-solid.svg'
+            const handInactive = 'hand.svg'
+
+            if(toggleImage.src.match(handInactive)) {
+                toggleImage.src = `${basePath}${handActive}`
+                return;
+            }
+            toggleImage.src = `${basePath}${handInactive}`
+
+        }
+    }
+    
+
+    static configureClapButton(command) {
+        btnClap.addEventListener('click', View._onClapClick(command))
+    }
+ 
+    static _redirectToLobby() {
+        window.location = constants.pages.lobby
+    }    
+
+    static configureLeaveButton() {
+        btnLeave.addEventListener('click', () => View._redirectToLobby())
+    }
+
+    static _toggleMicrophoneIcon() {
+        const icon = btnMicrophone.firstElementChild
+        const classes = [...icon.classList]
+
+        const inactiveMicClass = 'fa-microphone-slash'
+        const activeMicClass = 'fa-microphone'
+
+        const isInactiveMic = classes.includes(inactiveMicClass)
+        if(isInactiveMic) {
+            icon.classList.remove(inactiveMicClass)
+            icon.classList.add(activeMicClass)
+            return;
+        }
+        icon.classList.remove(activeMicClass)
+        icon.classList.add(inactiveMicClass)
+
+    }
+
+    static configureOnMicrophoneActivation(command) {
+        btnMicrophone.addEventListener('click', () => {
+            View._toggleMicrophoneIcon()
+            command()
+        })
+    }
+
+
+
+    // static _onShowModalRequest() {
+    //     toggleModal('topic-modal', open)
+    //     btnsTopicModal.forEach(button => button.addEventListener('click', e => {
+    //         if(e.target.id === btnAcepteRequest) {
+    //             return true
+    //         }
+    //         return false
+    //     }))
+        
+
+    // }
+
+    // static showModalRequest() {
+    //     const response = View._onShowModalRequest()
+    //     return response
+    // }
 }

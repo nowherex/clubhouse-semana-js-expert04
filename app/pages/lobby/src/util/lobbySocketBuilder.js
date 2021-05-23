@@ -1,12 +1,11 @@
 
-import { constants } from "../../../_shared/constants.js"
-import SocketBuilder from "../../../_shared/socketBuilder.js"
+import { constants } from "../../../_shared/constants.js";
+import SocketBuilder from "../../../_shared/socketBuilder.js";
 
-export default class LobbySocketBuilder extends SocketBuilder{
-    constructor({ socketUrl, namespace}) {
-        super({ socketUrl, namespace})
-        this.onLobbyUpdated = () => {}
-
+export default class LobbySocketBuilder extends SocketBuilder {
+    constructor({ socketUrl, namespace }) {
+        super({ socketUrl, namespace })
+        this.onLobbyUpdated = () => { }
     }
 
     setOnLobbyUpdated(fn) {
@@ -15,12 +14,11 @@ export default class LobbySocketBuilder extends SocketBuilder{
         return this
     }
 
-
-    builder() {
-        const socket = super.builder()
+    build() {
+        const socket = super.build()
 
         socket.on(constants.events.LOBBY_UPDATED, this.onLobbyUpdated)
-       
-        return socket
+
+        return socket;
     }
 }

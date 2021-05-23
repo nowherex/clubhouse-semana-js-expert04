@@ -1,5 +1,5 @@
 export default class UserStream {
-    constructor({ stream, isFake}) {
+    constructor({ stream, isFake }) {
         this.stream = stream
         this.isFake = isFake
     }

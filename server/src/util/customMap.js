@@ -1,18 +1,17 @@
 export default class CustomMap extends Map {
     #observer
     #customMapper
-    constructor({ observer, customMapper}) {
+    constructor({ observer, customMapper }) {
         super()
 
         this.#observer = observer
         this.#customMapper = customMapper
     }
-
     * values() {
-        for(const value of super.values())
-        yield this.#customMapper(value)
+        for(const value of super.values()) {
+            yield this.#customMapper(value)
+        }
     }
-
     set(...args) {
         const result = super.set(...args)
         this.#observer.notify(this)
@@ -26,5 +25,4 @@ export default class CustomMap extends Map {
 
         return result
     }
-
 }

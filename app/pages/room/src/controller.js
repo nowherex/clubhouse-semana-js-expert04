@@ -6,14 +6,13 @@ export default class RoomController {
         this.socketBuilder = socketBuilder
         this.peerBuilder = peerBuilder
         this.roomInfo = roomInfo
-        this.roomService = roomService
         this.view = view
+        this.roomService = roomService
 
         this.socket = {}
     }
 
     static async initialize(deps) {
-
         return new RoomController(deps)._initialize()
     }
 
@@ -26,17 +25,58 @@ export default class RoomController {
     }
 
     _setupViewEvents() {
+        this.view.configureOnMicrophoneActivation(this.onMicrophoneActivation())
+        this.view.configureLeaveButton()
+        this.view.configureClapButton(this.onClapPressed())
         this.view.updateUserImage(this.roomInfo.user)
         this.view.updateRoomTopic(this.roomInfo.room)
+    }
+
+    onMicrophoneActivation() {
+        return async () => {
+            await this.roomService.toggleAudioActivation()
+        }
+    }
+
+    onClapPressed() {
+        return () => {
+            this.socket.emit(constants.events.SPEAK_REQUEST, this.roomInfo.user)
+        }
     }
 
     _setupSocket() {
         return this.socketBuilder
             .setOnUserConnected(this.onUserConnected())
-            .setOnUserDisconnected(this.onUserDisconnected())
+            .setOnUserDisconnected(this.onDisconnected())
             .setOnRoomUpdated(this.onRoomUpdated())
             .setOnUserProfileUpgrade(this.onUserProfileUpgrade())
-            .builder()
+            .setOnSpeakRequested(this.onSpeakRequested())
+            .build()
+    }
+
+    // async _testeAwait() {
+    //     const result = await this.view.showModalRequest()
+    //     return result
+    // }
+
+    // esperarPorTempo() {
+    //     return new Promise((resolve) => {
+    //         const result = await this.view.showModalRequest()
+    //         resolve('resultado', result)
+    //         return;
+    //     })
+    // }
+
+    onSpeakRequested() {
+        return (data) => {
+            const user = new Attendee(data)
+            const result = prompt(`${user.username} pediu para falar, aceitar? 1 sim, 0 não`)
+            this.socket.emit(constants.events.SPEAK_ANSWER, {answer: !!Number(result), user})
+            
+    
+            
+            
+        }
     }
 
     async _setupWebRTC() {
@@ -47,16 +87,16 @@ export default class RoomController {
             .setOnCallError(this.onCallError())
             .setOnCallClose(this.onCallClose())
             .setOnStreamReceived(this.onStreamReceived())
-            .builder()
+            .build()
     }
 
     onStreamReceived() {
         return (call, stream) => {
-            const calledId = call.peer
+            const callerId = call.peer
             console.log('onStreamReceived', call, stream)
             const { isCurrentId } = this.roomService.addReceivedPeer(call)
             this.view.renderAudioElement({
-                calledId,
+                callerId,
                 stream,
                 isCurrentId
             })
@@ -68,6 +108,7 @@ export default class RoomController {
             console.log('onCallClose', call)
             const peerId = call.peer
             this.roomService.disconnectPeer({ peerId })
+
         }
     }
 
@@ -76,28 +117,27 @@ export default class RoomController {
             console.log('onCallError', call, error)
             const peerId = call.peer
             this.roomService.disconnectPeer({ peerId })
+
         }
     }
 
     onCallReceived() {
         return async (call) => {
             const stream = await this.roomService.getCurrentStream()
-            console.log('answer ',call)
+            console.log('answering call', call)
             call.answer(stream)
         }
     }
 
     onPeerError() {
         return (error) => {
-            console.log('Deu RUIMMM', error)
+            console.error('deu ruim', error)
         }
     }
-
-
-    //quando a conexão for aberta, ele pede para entrar na sala do socket
+    // quando a conexao for aberta ele pede para entrar na sala do socket
     onPeerConnectionOpened() {
         return (peer) => {
-            console.log('peeer', peer)
+            console.log('peeeeer', peer)
             this.roomInfo.user.peerId = peer.id
             this.socket.emit(constants.events.JOIN_ROOM, this.roomInfo)
         }
@@ -107,10 +147,9 @@ export default class RoomController {
         return (data) => {
             const attendee = new Attendee(data)
             console.log('onUserProfileUpgrade', attendee)
-
-            this.roomService.upgradeUserPermission(attendee)
-
+            
             if (attendee.isSpeaker) {
+                this.roomService.upgradeUserPermission(attendee)
                 this.view.addAttendeeOnGrid(attendee, true)
             }
 
@@ -126,15 +165,17 @@ export default class RoomController {
             this.view.updateAttendeesOnGrid(users)
             this.roomService.updateCurrentUserProfile(users)
             this.activateUserFeatures()
+
         }
     }
 
-    onUserDisconnected() {
+    onDisconnected() {
         return (data) => {
             const attendee = new Attendee(data)
+
             console.log(`${attendee.username} disconnected!`)
             this.view.removeItemFromGrid(attendee.id)
-            console.log('onUserDisconnected')
+            
             this.roomService.disconnectPeer(attendee)
         }
     }
@@ -145,7 +186,7 @@ export default class RoomController {
             console.log('user connected!', attendee)
             this.view.addAttendeeOnGrid(attendee)
 
-            //vamos ligar!!!
+            // vamos ligar!!
             this.roomService.callNewUser(attendee)
         }
     }

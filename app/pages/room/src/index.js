@@ -6,23 +6,22 @@ import RoomService from "./service.js"
 import RoomSocketBuilder from "./util/roomSocket.js"
 import View from "./view.js"
 
+
 const urlParams = new URLSearchParams(window.location.search)
 const keys = ['id', 'topic']
-
 const urlData = keys.map((key) => [key, urlParams.get(key)])
 
 
 
 const user = {
     img: 'https://cdn2.iconfinder.com/data/icons/social-flat-buttons-3/512/anonymous-256.png',
-    username: 'Leonardo' + Date.now()
+    username: 'Leonardo ' + Date.now()
 }
 
 const roomInfo = {
     room: { ...Object.fromEntries(urlData) },
     user
 }
-
 const peerBuilder = new PeerBuilder({
     peerConfig: constants.peerConfig
 })
@@ -31,8 +30,6 @@ const socketBuilder = new RoomSocketBuilder({
     socketUrl: constants.socketUrl,
     namespace: constants.socketNamespaces.room
 })
-
-
 const roomService = new RoomService({
     media: Media
 })
@@ -45,4 +42,10 @@ const dependencies = {
     peerBuilder
 }
 
+
 await RoomController.initialize(dependencies)
+    .catch(error => {
+        window.alert(error.message)
+    })
+
+
