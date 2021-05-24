@@ -121,6 +121,11 @@ export default class View {
     static configureClapButton(command) {
         btnClap.addEventListener('click', View._onClapClick(command))
     }
+
+    static redirectToLogin() {
+        window.location = constants.pages.login
+    }
+
  
     static _redirectToLobby() {
         window.location = constants.pages.lobby
